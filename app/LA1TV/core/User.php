@@ -1,14 +1,14 @@
-<?php namespace App;
+<?php namespace App\LA1TV\Core;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
-
-	use Authenticatable, CanResetPassword;
+	use Authenticatable, CanResetPassword, SoftDeletes;
 
 	/**
 	 * The database table used by the model.
@@ -18,11 +18,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $table = 'users';
 
 	/**
-	 * The attributes that are mass assignable.
+	 * The attributes that are not mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['name', 'email', 'password'];
+	protected $guarded = ['id'];
 
 	/**
 	 * The attributes excluded from the model's JSON form.
@@ -31,4 +31,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	 */
 	protected $hidden = ['password', 'remember_token'];
 
+	/**
+	 * For soft deletes
+	 *
+	 * @var array
+	 */
+	protected $dates = ['deleted_at'];
+
+
+	/**
+	 * Hash the users password
+	 *
+	 * @param $value
+	 */
+	public function setPasswordAttribute($value)
+	{
+		if (\Hash::needsRehash($value))
+			$this->attributes['password'] = bcrypt($value);
+		else
+			$this->attributes['password'] = $value;
+	}
 }
