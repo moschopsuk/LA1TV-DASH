@@ -1,4 +1,4 @@
-<?php namespace App\LA1TV\Core;
+<?php namespace App\LA1TV\Core\Users;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
